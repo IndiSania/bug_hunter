@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BugHunter — Python Code Analyzer</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <div class="brand"><span class="logo">BH</span><div><b>BugHunter</b><small>Python Code Analyzer</small></div></div>
+    <nav><a class="active" href="/">Dashboard</a><a href="#scanner">Code Scanner</a><a href="#history">Scan History</a></nav>
+    <div class="side-note"><span>●</span> Static Analysis Engine<br><small>AST-powered inspection</small></div>
+  </aside>
+
+  <main>
+    <header>
+      <div><p class="eyebrow">DEVELOPER TOOLKIT</p><h1>Code quality, <span>under control.</span></h1>
+      <p class="sub">Analisis source code Python untuk menemukan potensi bug, security issue, dan masalah kualitas kode.</p></div>
+      <div class="status"><i></i> Engine Ready</div>
+    </header>
+
+    <section id="scanner" class="upload-card">
+      <div class="upload-icon">⌁</div>
+      <div><h2>Scan Python Project</h2><p>Upload file <b>.py</b> atau <b>.zip</b> project Python.</p></div>
+      <label class="button">Pilih File <input id="file" type="file" accept=".py,.zip" hidden></label>
+      <button class="button primary" onclick="startScan()">Mulai Scan</button>
+      <div id="filename" class="filename">Belum ada file dipilih</div>
+    </section>
+
+    <div id="loading" class="loading" hidden><div class="spinner"></div><span>Menganalisis source code...</span></div>
+    <div id="error" class="error" hidden></div>
+
+    <section id="results" hidden>
+      <div class="stats">
+        <div class="stat"><small>QUALITY SCORE</small><strong id="score">0</strong><span>/ 100</span></div>
+        <div class="stat"><small>FILES SCANNED</small><strong id="files">0</strong></div>
+        <div class="stat"><small>LINES</small><strong id="lines">0</strong></div>
+        <div class="stat"><small>FINDINGS</small><strong id="total">0</strong></div>
+      </div>
+      <div class="grid">
+        <div class="panel"><div class="panel-head"><div><h3>Severity Overview</h3><p>Distribusi temuan hasil analisis</p></div></div><div class="chart-wrap"><canvas id="chart"></canvas></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Scan Summary</h3><p>Ringkasan tingkat prioritas</p></div></div><div id="summary" class="summary"></div></div>
+      </div>
+      <div class="panel findings"><div class="panel-head"><div><h3>Findings</h3><p>Temuan yang perlu ditinjau</p></div><a id="download" class="button ghost">Export JSON</a></div>
+        <div class="filters"><input id="search" placeholder="Cari file, rule, atau pesan..." oninput="renderFindings()"><select id="severity" onchange="renderFindings()"><option value="">Semua severity</option><option>critical</option><option>high</option><option>medium</option><option>low</option><option>info</option></select></div>
+        <div id="findingList"></div>
+      </div>
+    </section>
+
+    <section id="history" class="panel history"><div class="panel-head"><div><h3>Recent Scans</h3><p>Riwayat pemeriksaan pada sesi ini</p></div></div>
+      <div id="historyList">{% if not history %}<div class="empty">Belum ada scan.</div>{% endif %}{% for h in history %}<div class="history-row"><span class="mini">{{ h.score }}</span><div><b>{{ h.filename }}</b><small>{{ h.created_at }} · {{ h.files_scanned }} file · {{ h.total }} findings</small></div></div>{% endfor %}</div>
+    </section>
+    <footer>BugHunter · Python Static Analysis Platform</footer>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
